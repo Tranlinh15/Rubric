@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tự đánh giá Rubric - Nhóm 8 FIGHTERUS</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- SheetJS (XLSX) - Thư viện xuất Excel MỚI -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* --- Cài đặt Biến màu (Theme) --- */
+      :root {
+        /* Theme 1 (Default - Blue) */
+        --color-primary: #0369a1;
+        --color-primary-hover: #075985;
+        --color-secondary: #0ea5e9;
+        --color-secondary-hover: #0284c7;
+        --color-accent: #0c4a6e;
+        --color-accent-light: rgba(14, 165, 233, 0.3);
+        --color-bg-light: #f0f9ff;
+        --color-bg-dark: #e0f2fe;
+        --color-bg-gradient: linear-gradient(
+          120deg,
+          #f0f9ff,
+          #e0f2fe,
+          #cffafe,
+          #a5f3fc
+        );
+      }
+
+      .theme-1 {
+        /* Blue */
+        --color-primary: #0369a1;
+        --color-primary-hover: #075985;
+        --color-secondary: #0ea5e9;
+        --color-secondary-hover: #0284c7;
+        --color-accent: #0c4a6e;
+        --color-accent-light: rgba(14, 165, 233, 0.3);
+        --color-bg-light: #f0f9ff;
+        --color-bg-dark: #e0f2fe;
+        --color-bg-gradient: linear-gradient(
+          120deg,
+          #f0f9ff,
+          #e0f2fe,
+          #cffafe,
+          #a5f3fc
+        );
+      }
+
+      .theme-2 {
+        /* Pink */
+        --color-primary: #d6336c;
+        --color-primary-hover: #a61e4d;
+        --color-secondary: #e64980;
+        --color-secondary-hover: #d6336c;
+        --color-accent: #a61e4d;
+        --color-accent-light: rgba(214, 51, 108, 0.3);
+        --color-bg-light: #fceef5;
+        --color-bg-dark: #f3eafa;
+        --color-bg-gradient: linear-gradient(
+          120deg,
+          #fceef5,
+          #f3eafa,
+          #fae6f2,
+          #f8f0fc
+        );
+      }
+
+      .theme-3 {
+        /* Green */
+        --color-primary: #2f9e44;
+        --color-primary-hover: #2b8a3e;
+        --color-secondary: #40c057;
+        --color-secondary-hover: #37b24d;
+        --color-accent: #2b8a3e;
+        --color-accent-light: rgba(64, 192, 87, 0.3);
+        --color-bg-light: #f1fcf3;
+        --color-bg-dark: #e6fcf5;
+        --color-bg-gradient: linear-gradient(
+          120deg,
+          #f1fcf3,
+          #e6fcf5,
+          #d3f9d8,
+          #c3fae8
+        );
+      }
+
+      .theme-4 {
+        /* Orange */
+        --color-primary: #f76707;
+        --color-primary-hover: #e8590c;
+        --color-secondary: #fd7e14;
+        --color-secondary-hover: #f76707;
+        --color-accent: #e8590c;
+        --color-accent-light: rgba(253, 126, 20, 0.3);
+        --color-bg-light: #fff8f0;
+        --color-bg-dark: #fff4e6;
+        --color-bg-gradient: linear-gradient(
+          120deg,
+          #fff8f0,
+          #fff4e6,
+          #ffe8cc,
+          #ffd8a8
+        );
+      }
+
+      .theme-5 {
+        /* Indigo */
+        --color-primary: #4c6ef5;
+        --color-primary-hover: #4263eb;
+        --color-secondary: #5c7cfa;
+        --color-secondary-hover: #4c6ef5;
+        --color-accent: #4263eb;
+        --color-accent-light: rgba(76, 110, 245, 0.3);
+        --color-bg-light: #f3f4ff;
+        --color-bg-dark: #eef2ff;
+        --color-bg-gradient: linear-gradient(
+          120deg,
+          #f3f4ff,
+          #eef2ff,
+          #dbe4ff,
+          #dbe4ff
+        );
+      }
+      /* --- End Themes --- */
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--color-bg-gradient);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+        color: #333;
+        text-align: center;
+        margin: 0;
+        padding: 20px;
+        font-size: 16px;
+        transition: background 0.5s ease;
+      }
+
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      h1 {
+        color: var(--color-accent);
+        margin-top: 20px;
+        text-shadow: 1px 1px 2px #fff;
+        font-size: 2.5rem;
+        transition: color 0.5s ease;
+      }
+
+      /* --- Form Styling --- */
+      form {
+        background: rgba(255, 255, 255, 0.95);
+        width: 90%;
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        overflow: hidden; /* Chứa animation */
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .form-group label {
+        font-weight: 600;
+        color: #555;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      textarea,
+      select,
+      input[type="number"] {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 6px 0;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        font-family: "Poppins", sans-serif;
+      }
+
+      input[type="number"].invalid {
+        border-color: #f43f5e;
+        background-color: #fff1f2;
+        border-width: 2px;
+      }
+
+      .date-group {
+        display: flex;
+        gap: 20px;
+      }
+      .date-group .form-group {
+        flex: 1;
+      }
+
+      button {
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin: 10px 5px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--color-primary-hover);
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      #error-message {
+        color: red;
+        font-weight: 600;
+        display: none;
+        margin-top: 15px;
+      }
+
+      /* --- Wizard Styling (MỚI) --- */
+      #info-section,
+      #results-section {
+        text-align: left;
+      }
+
+      .wizard-step {
+        display: none; /* Ẩn tất cả các bước */
+        animation: fadeIn 0.5s ease-in-out;
+        text-align: left;
+      }
+
+      .wizard-step.active {
+        display: block; /* Chỉ hiện bước active */
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #progress-bar-container {
+        width: 100%;
+        background-color: #eee;
+        border-radius: 10px;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+
+      #progress-bar {
+        width: 0%;
+        height: 15px;
+        background-color: var(--color-secondary);
+        border-radius: 10px;
+        transition: width 0.5s ease, background-color 0.5s ease;
+        text-align: center;
+        color: white;
+        font-size: 12px;
+        line-height: 15px;
+        font-weight: 600;
+      }
+
+      .nav-btn-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+      }
+      .nav-btn-group button {
+        font-size: 1rem;
+        padding: 10px 18px;
+      }
+
+      /* --- Skill Box Styling --- */
+      .skill-box {
+        background-color: var(--color-bg-light);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        text-align: left;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--color-bg-dark);
+        transition: background-color 0.5s ease;
+      }
+
+      .skill-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .skill-title {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #444;
+      }
+
+      .details-btn {
+        background-color: var(--color-secondary);
+        color: white;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        margin: 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .details-btn:hover {
+        background-color: var(--color-secondary-hover);
+      }
+
+      .skill-inputs {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: 15px;
+        align-items: center;
+      }
+
+      @media (max-width: 600px) {
+        .skill-inputs {
+          grid-template-columns: 1fr;
+        }
+        .date-group {
+          flex-direction: column;
+          gap: 0;
+        }
+        .skill-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      /* --- Rubric Link --- */
+      .rubric-link {
+        display: block;
+        margin: 15px 0;
+        color: var(--color-primary);
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 1.1rem;
+      }
+      .rubric-link:hover {
+        text-decoration: underline;
+      }
+
+      /* --- Chart --- */
+      #chart-container {
+        width: 100%;
+        max-width: 400px;
+        margin: 20px auto;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        position: relative; /* Thêm để chứa ảnh tạm */
+      }
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      /* Ảnh tạm để xuất PDF (MỚI) */
+      #pdf-chart-image {
+        display: none; /* Ẩn ban đầu */
+        width: 100%;
+        max-width: 350px;
+        margin: 10px auto;
+      }
+
+      /* --- Modal Styling --- */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .modal-content {
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        color: #aaa;
+        line-height: 1;
+      }
+      .modal-close:hover {
+        color: #333;
+      }
+      .modal-content h2 {
+        margin-top: 0;
+        color: var(--color-primary);
+      }
+      .modal-content ul {
+        list-style: none;
+        padding-left: 0;
+        text-align: left;
+      }
+      .modal-content li {
+        background: #f9f9f9;
+        margin-bottom: 10px;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid var(--color-secondary);
+      }
+      .modal-content li strong {
+        color: var(--color-accent);
+        font-size: 1.1rem;
+      }
+
+      /* --- PDF Export & Report Styling (ĐÃ CẬP NHẬT) --- */
+      #report-content {
+        /* (ĐÃ XÓA) Gỡ bỏ style A4 cố định */
+        /*
+      width: 720px;
+      margin: 30px auto;
+      padding: 40px;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      */
+
+        /* (MỚI) Trở lại layout co giãn 100% */
+        width: 100%;
+        margin: 0;
+        padding: 15px; /* Giảm padding để vừa A4 */
+        background: #fff; /* Giữ lại nền trắng */
+        border-radius: 15px; /* (MỚI) Thêm bo góc cho hợp layout */
+
+        box-sizing: border-box;
+
+        /* Đây là nội dung sẽ được xuất PDF */
+        text-align: left;
+        
+        /* Tối ưu render cho PDF - làm chữ sắc nét hơn */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* (MỚI) Gỡ bỏ media query cho A4 */
+      @media (max-width: 800px) {
+        #report-content {
+          width: 100%;
+          margin: 0; /* (ĐÃ SỬA) */
+          padding: 15px; /* (ĐÃ SỬA) */
+          border: none;
+          box-shadow: none;
+        }
+      }
+
+      /* (ĐÃ XÓA) Gỡ bỏ class helper .pdf-generating */
+      /*
+    .pdf-generating #report-content {
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    .pdf-generating .nav-btn-group {
+      display: none !important; 
+    }
+    */
+
+      .pdf-header {
+        text-align: center;
+        border-bottom: 2px solid var(--color-accent);
+        padding-bottom: 8px;
+        margin-bottom: 15px;
+      }
+      .pdf-header h1 {
+        color: var(--color-accent);
+        margin: 0;
+        font-size: 20pt;
+        text-align: center;
+      }
+      .pdf-header h3 {
+        color: var(--color-primary);
+        margin: 3px 0 0 0;
+        font-size: 14pt;
+        font-weight: 600;
+        text-align: center;
+      }
+      .pdf-info {
+        margin-bottom: 15px;
+        font-size: 11pt;
+      }
+      .pdf-info p {
+        margin: 5px 0;
+        color: #333;
+        text-align: left;
+      }
+      .pdf-info span {
+        font-weight: 400;
+      }
+      .pdf-info strong {
+        color: var(--color-primary-hover);
+        width: 150px;
+        display: inline-block;
+        font-weight: 600;
+      }
+      .pdf-chart-container {
+        text-align: center;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        page-break-inside: avoid; /* (MỚI) Ngăn chart bị ngắt */
+        page-break-after: auto; /* (MỚI) Cho phép ngắt trang sau mục này nếu cần */
+      }
+      .pdf-chart-container h2 {
+        color: var(--color-accent);
+        text-align: center;
+        font-size: 14pt;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+      }
+      .pdf-chart-container img {
+        display: block;
+        margin: 10px auto;
+        width: 100%;
+        max-width: 350px;
+      }
+
+      /* Bảng điểm chi tiết (MỚI) */
+      .pdf-table-container {
+        margin-top: 15px;
+        page-break-inside: avoid; /* (MỚI) Ngăn bảng (và tiêu đề) bị ngắt */
+        page-break-after: auto; /* (MỚI) Cho phép ngắt trang sau mục này nếu cần */
+      }
+      .pdf-table-container h2 {
+        color: var(--color-accent);
+        font-size: 14pt;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+      }
+      .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 9pt;
+      }
+      .report-table th,
+      .report-table td {
+        border: 1px solid #ddd;
+        padding: 6px;
+        text-align: left;
+        word-break: break-word;
+      }
+      .report-table th {
+        background-color: var(--color-bg-light);
+        color: var(--color-accent);
+        font-weight: 600;
+      }
+      .report-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      .report-table td:nth-child(1) {
+        width: 30%;
+      } /* Kỹ năng */
+      .report-table td:nth-child(2) {
+        width: 10%;
+        text-align: center;
+      } /* Điểm */
+      .report-table td:nth-child(3) {
+        width: 60%;
+      } /* Nhận xét */
+
+      /* Nhận xét tổng quan (MỚI) */
+      .pdf-comment {
+        margin-top: 15px;
+        page-break-inside: avoid; /* (MỚI) Ngăn mục này bị ngắt */
+      }
+      .pdf-comment h2 {
+        color: var(--color-accent);
+        font-size: 14pt;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+      }
+      .pdf-comment p {
+        font-size: 10pt;
+        color: #333;
+        white-space: pre-wrap;
+        text-align: left;
+        background: var(--color-bg-light);
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--color-bg-dark);
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body class="theme-1">
+    <!-- SỬA LỖI 1: Bỏ 1 emoji hoa -->
+    <h1>🌸[NHÓM 8 -FIGHTERUS] BẢNG ĐÁNH GIÁ NĂNG LỰC RUBRIC🌸</h1>
+
+    <form id="rubricForm" onsubmit="return false;">
+      <!-- BƯỚC 1: THÔNG TIN CHUNG -->
+      <div id="info-section" class="wizard-step" data-step="0">
+        <!-- Xóa class 'active' ban đầu, JS sẽ xử lý -->
+        <h2>Thông tin chung</h2>
+        <div class="form-group">
+          <label for="groupName">Tên nhóm:</label>
+          <input
+            type="text"
+            id="groupName"
+            value="Nhóm 8 FIGHTERUS"
+            required
+            placeholder="Nhập tên nhóm..."
+          />
+        </div>
+
+        <!-- CHỌN THÀNH VIÊN (MỚI) -->
+        <div class="form-group">
+          <label for="member-select">Chọn thành viên:</label>
+          <select id="member-select" required>
+            <option value="" disabled selected>-- Chọn tên của bạn --</option>
+            <option value="1">Trần Như Tri</option>
+            <option value="2">Trần Văn Lĩnh</option>
+            <option value="3">Nguyễn Kiều Xuân Hậu</option>
+            <option value="4">Phạm Việt Thùy Trinh</option>
+            <option value="5">Nguyễn Thị Hằng</option>
+          </select>
+        </div>
+
+        <div class="date-group">
+          <div class="form-group">
+            <label for="week-start">Tuần - Từ ngày:</label>
+            <input type="date" id="week-start" required />
+          </div>
+          <div class="form-group">
+            <label for="week-end">Đến ngày:</label>
+            <input type="date" id="week-end" required />
+          </div>
+        </div>
+
+        <a
+          class="rubric-link"
+          href="httpsD://docs.google.com/document/d/1tYI1T4RUBRIC-FIGHTERUS-CHUAN"
+          target="_blank"
+        >
+          📘 Xem file Rubric chuẩn tại đây
+        </a>
+
+        <p id="error-message-step0" style="color: red; display: none">
+          Vui lòng điền đầy đủ thông tin chung.
+        </p>
+
+        <div class="nav-btn-group">
+          <span></span>
+          <!-- Placeholder for alignment -->
+          <button type="button" onclick="nextStep(0)">Bắt đầu ➡️</button>
+        </div>
+      </div>
+
+      <!-- THANH TIẾN TRÌNH (MỚI) -->
+      <div id="progress-bar-container" style="display: none">
+        <div id="progress-bar">0%</div>
+      </div>
+
+      <!-- CÁC BƯỚC ĐÁNH GIÁ (WIZARD) -->
+      <div id="wizard-container" style="display: none">
+        <!-- 1. Làm việc nhóm -->
+        <div class="skill-box wizard-step" data-step="1">
+          <div class="skill-header">
+            <div class="skill-title">1️⃣ Làm việc nhóm (Team Work)</div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(1, 'Làm việc nhóm')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s1"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c1"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step1"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(1)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 2. Quản lý thời gian -->
+        <div class="skill-box wizard-step" data-step="2">
+          <div class="skill-header">
+            <div class="skill-title">2️⃣ Quản lý thời gian (Planning)</div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(2, 'Quản lý thời gian')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s2"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c2"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step2"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(2)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 3. Trách nhiệm & hỗ trợ -->
+        <div class="skill-box wizard-step" data-step="3">
+          <div class="skill-header">
+            <div class="skill-title">3️⃣ Trách nhiệm & hỗ trợ (Project Mgt)</div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(3, 'Trách nhiệm & hỗ trợ')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s3"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c3"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step3"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(3)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 4. Giải quyết vấn đề -->
+        <div class="skill-box wizard-step" data-step="4">
+          <div class="skill-header">
+            <div class="skill-title">
+              4️⃣ Giải quyết vấn đề (Problem Solving)
+            </div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(4, 'Giải quyết vấn đề')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s4"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c4"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step4"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(4)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 5. Giao tiếp & thấu hiểu -->
+        <div class="skill-box wizard-step" data-step="5">
+          <div class="skill-header">
+            <div class="skill-title">
+              5️⃣ Giao tiếp & thấu hiểu (Interpersonal)
+            </div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(5, 'Giao tiếp & thấu hiểu')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s5"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c5"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step5"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(5)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 6. Ứng phó khủng hoảng -->
+        <div class="skill-box wizard-step" data-step="6">
+          <div class="skill-header">
+            <div class="skill-title">
+              6️⃣ Ứng phó khủng hoảng (Crisis Solving)
+            </div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(6, 'Ứng phó khủng hoảng')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s6"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c6"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step6"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(6)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 7. Giải quyết xung đột -->
+        <div class="skill-box wizard-step" data-step="7">
+          <div class="skill-header">
+            <div class="skill-title">
+              7️⃣ Giải quyết xung đột (Conflict Resolution)
+            </div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(7, 'Giải quyết xung đột')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s7"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c7"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step7"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(7)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 8. Viết -->
+        <div class="skill-box wizard-step" data-step="8">
+          <div class="skill-header">
+            <div class="skill-title">8️⃣ Viết (Writing)</div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(8, 'Viết')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s8"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c8"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step8"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(8)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 9. Lắng nghe -->
+        <div class="skill-box wizard-step" data-step="9">
+          <div class="skill-header">
+            <div class="skill-title">9️⃣ Lắng nghe (Listening)</div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(9, 'Lắng nghe')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s9"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c9"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step9"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(9)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 10. Tự học -->
+        <div class="skill-box wizard-step" data-step="10">
+          <div class="skill-header">
+            <div class="skill-title">🔟 Tự học (Learning)</div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(10, 'Tự học')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s10"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c10"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step10"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(10)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 11. Thuyết trình -->
+        <div class="skill-box wizard-step" data-step="11">
+          <div class="skill-header">
+            <div class="skill-title">1️⃣1️⃣ Thuyết trình (Presentation)</div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(11, 'Thuyết trình')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s11"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c11"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step11"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(11)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 12. Tương tác nhóm Online -->
+        <div class="skill-box wizard-step" data-step="12">
+          <div class="skill-header">
+            <div class="skill-title">
+              1️⃣2️⃣ Tương tác nhóm Online (Group Online)
+            </div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(12, 'Tương tác nhóm Online')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s12"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c12"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step12"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(12)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 13. Chuyên cần -->
+        <div class="skill-box wizard-step" data-step="13">
+          <div class="skill-header">
+            <div class="skill-title">1️⃣3️⃣ Chuyên cần (Attendance)</div>
+            <!-- SỬA LỖI 2: Xóa class_= -->
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(13, 'Chuyên cần')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s13"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c13"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step13"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(13)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 14. Lãnh đạo -->
+        <div class="skill-box wizard-step" data-step="14">
+          <div class="skill-header">
+            <div class="skill-title">1️⃣4️⃣ Lãnh đạo (Leadership)</div>
+            <button
+              type="button"
+              class="details-btn"
+              onclick="showModal(14, 'Lãnh đạo')"
+            >
+              Xem chi tiết
+            </button>
+          </div>
+          <div class="skill-inputs">
+            <input
+              type="number"
+              min="0"
+              max="3"
+              id="s14"
+              placeholder="Điểm (0-3)..."
+              required
+              oninput="validateScore(this)"
+            />
+            <textarea
+              id="c14"
+              rows="2"
+              placeholder="Tự nhận xét..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step14"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền điểm (0-3) và nhận xét.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="nextStep(14)">Tiếp theo ➡️</button>
+          </div>
+        </div>
+
+        <!-- 15. Nhận xét tổng quan -->
+        <div class="skill-box wizard-step" data-step="15">
+          <div class="skill-header">
+            <div class="skill-title">1️⃣5️⃣ Nhận xét tổng quan</div>
+          </div>
+          <div class="form-group" style="margin-top: 20px">
+            <label for="comment">Tổng kết tuần này của bạn:</label>
+            <textarea
+              id="comment"
+              rows="6"
+              placeholder="Tổng kết tuần này của bạn..."
+              required
+            ></textarea>
+          </div>
+          <p
+            id="error-message-step15"
+            class="step-error"
+            style="color: red; display: none"
+          >
+            Vui lòng điền nhận xét tổng quan.
+          </p>
+          <div class="nav-btn-group">
+            <button type="button" onclick="prevStep()">⬅️ Quay lại</button>
+            <button type="button" onclick="finishForm()">
+              🎉 Hoàn thành & Xem kết quả
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BƯỚC CUỐI: KẾT QUẢ (ĐÃ CẬP NHẬT) -->
+      <div id="results-section" style="display: none">
+        <!-- Nội dung báo cáo để xuất PDF -->
+        <div id="report-content">
+          <div class="pdf-header">
+            <h1>BÁO CÁO TỰ ĐÁNH GIÁ RUBRIC</h1>
+            <h3 id="report-groupName"></h3>
+          </div>
+
+          <div class="pdf-info">
+            <p><strong>Thành viên:</strong> <span id="report-name"></span></p>
+            <p>
+              <strong>Tuần làm việc:</strong> <span id="report-week"></span>
+            </p>
+          </div>
+
+          <div class="pdf-chart-container">
+            <h2>Biểu đồ năng lực Radar</h2>
+            <div id="chart-container" style="max-width: 350px; padding: 10px;">
+              <canvas id="radarChart"></canvas>
+              <!-- Ảnh tạm để xuất PDF (MỚI) -->
+              <img id="pdf-chart-image" src="" alt="Biểu đồ Rubric" />
+            </div>
+          </div>
+
+          <!-- Bảng điểm chi tiết (MỚI) -->
+          <div class="pdf-table-container">
+            <h2>Bảng điểm chi tiết</h2>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Kỹ năng</th>
+                  <th>Điểm</th>
+                  <th>Nhận xét</th>
+                </tr>
+              </thead>
+              <tbody id="report-table-body">
+                <!-- JS sẽ điền vào đây -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Nhận xét tổng quan (MỚI) -->
+          <div class="pdf-comment">
+            <h2>Nhận xét tổng quan</h2>
+            <p id="report-comment-text"></p>
+          </div>
+        </div>
+
+        <!-- Các nút điều hướng (Nằm ngoài vùng PDF) -->
+        <div class="nav-btn-group">
+          <button type="button" onclick="startOver()">⬅️ Làm lại từ đầu</button>
+          <div>
+            </button>
+            <button type="button" onclick="downloadExcel()">
+              📊 Tải file Excel
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Modal Structure -->
+    <div class="modal-overlay" id="rubricModal" onclick="closeModal()">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title">Chi tiết Rubric</h2>
+        <ul id="modal-list">
+          <!-- Nội dung sẽ được chèn bằng JavaScript -->
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      let chart;
+      let currentStep = 0; // Bước hiện tại của wizard
+      const totalSteps = 15; // 14 skills + 1 comment = 15 bước sau info
+      const wizardSteps = document.querySelectorAll(".wizard-step");
+      const progressBar = document.getElementById("progress-bar");
+      const progressBarContainer = document.getElementById(
+        "progress-bar-container"
+      );
+      const infoSection = document.getElementById("info-section");
+      const wizardContainer = document.getElementById("wizard-container");
+      const resultsSection = document.getElementById("results-section");
+
+      // --- Labels (Dùng cho cả Chart và Excel) ---
+      const skillLabels = [
+        "Làm việc nhóm",
+        "Quản lý thời gian",
+        "Trách nhiệm & hỗ trợ",
+        "Giải quyết vấn đề",
+        "Giao tiếp & thấu hiểu",
+        "Ứng phó khủng hoảng",
+        "Giải quyết xung đột",
+        "Viết",
+        "Lắng nghe",
+        "Tự học",
+        "Thuyết trình",
+        "Tương tác nhóm Online",
+        "Chuyên cần",
+        "Lãnh đạo",
+      ];
+
+      // --- Dữ liệu Rubric (Cập nhật 14 kỹ năng 0-3) ---
+      const rubricCriteria = {
+        1: {
+          // Làm việc nhóm
+          0: "<strong>0 điểm (Normally):</strong> Không quan tâm đến công việc của nhóm, không tương tác với nhóm, không thực hiện nhiệm vụ được phân công.",
+          1: "<strong>1 điểm (Limited):</strong> Hiểu được cam kết của nhóm nhưng thực hiện nhiệm vụ được phân công đạt kết quả thấp.",
+          2: "<strong>2 điểm (Developing):</strong> Tuân thủ, giám sát cam kết chung của nhóm và tích cực thực hiện nhiệmVụ được phân công.",
+          3: "<strong>3 điểm (Proficient):</strong> Tích cực và chủ động hỗ trợ nhóm xác định mục tiêu nhóm, tích cực tham gia các hoạt động để đạt được mục tiêu.",
+        },
+        2: {
+          // Quản lý thời gian (Planning)
+          0: "<strong>0 điểm (Normally):</strong> Không biết sắp xếp thời gian hoàn thành công việc được giao.",
+          1: "<strong>1 điểm (Limited):</strong> Biết sắp xếp thời gian hoàn thành công việc được giao, nhưng thụ động.",
+          2: "<strong>2 điểm (Developing):</strong> Biết sắp xếp thời gian hoàn thành công việc được giao nhưng chưa tối ưu được các đầu việc, thiếu sự linh hoạt, kiểm soát rủi ro kém.",
+          3: "<strong>3 điểm (Proficient):</strong> Chủ động xây dựng kế hoạch cho cá nhân, tối ưu được các hạng mục cần hoàn thành, có kiểm soát rủi ro.",
+        },
+        3: {
+          // Trách nhiệm & hỗ trợ (Project Management)
+          0: "<strong>0 điểm (Normally):</strong> Không tuân thủ quy định của thành viên trong dự án.",
+          1: "<strong>1 điểm (Limited):</strong> Bảo đảm công việc được giao trong dự án.",
+          2: "<strong>2 điểm (Developing):</strong> Hoàn thành công việc được giao và giúp đỡ các thành viên khác.",
+          3: "<strong>3 điểm (Proficient):</strong> Hoàn thành sớm công việc được giao, giúp đỡ các thành viên khác, biết phân bổ / điều phối các nguồn lực, chủ động xử lý các vấn đề phát sinh, chủ động báo cáo tiến độ.",
+        },
+        4: {
+          // Giải quyết vấn đề (Problem Solving)
+          0: "<strong>0 điểm (Normally):</strong> Không biết cách phân tích đánh giá để tìm các nguyên nhân của vấn đề.",
+          1: "<strong>1 điểm (Limited):</strong> Biết cách đánh giá, phân tích, tìm ra nguyên nhân của vấn đề, nhưng không biết chọn lời giải hợp lý.",
+          2: "<strong>2 điểm (Developing):</strong> Biết cách đánh giá, phân tích, tìm ra nguyên nhân của vấn đề, biết xác định các đối tương liên quan, có đề xuất ra phương án giải quyết nhưng chưa tối ưu.",
+          3: "<strong>3 điểm (Proficient):</strong> Nhạy bén phát hiện vấn đề, nguyên nhân, các đối tượng liên quan, lập luận logic đưa ra các lời giải, đánh giá bài giải để chọn lời giải hợp lý, triển khai được các giải pháp để giải quyết vấn đề hiệu quả.",
+        },
+        5: {
+          // Giao tiếp & thấu hiểu (Interpersonal)
+          0: "<strong>0 điểm (Normally):</strong> Chưa hiểu và biết cách hướng hành vi của bản thân vào đối tượng giao tiếp... không biết kiểm soát cảm xúc cá nhân.",
+          1: "<strong>1 điểm (Limited):</strong> Biết hướng hành vi của bản thân theo đối tượng giao tiếp, bước đầu biết đặt bản thân vào vị trí của đối tượng giao tiếp, hành vi ứng xử còn chưa phù hợp.",
+          2: "<strong>2 điểm (Developing):</strong> Hiểu và biết các hướng hành vi theo mục tiêu nhiệm vụ, có hành vi ứng xử khoa học, phù hợp với nhu cầu, nguyện vọng của đối tượng giao tiếp nhưng chưa thường xuyên.",
+          3: "<strong>3 điểm (Proficient):</strong> Thường xuyên thấu hiểu đối tượng giao tiếp, biết cách hướng hành vi theo đối tượng giao tiếp, ứng xử khoa học phù hợp, luôn thấu cảm với đối tượng giao tiếp.",
+        },
+        6: {
+          // Ứng phó khủng hoảng (Crisis Solving)
+          0: "<strong>0 điểm (Normally):</strong> Không xác định nguyên nhân dẫn đến khủng hoảng, chưa có khả năng đối diện với khủng hoảng, không chịu đựng được áp lực.",
+          1: "<strong>1 điểm (Limited):</strong> Xác định nguyên nhân dẫn đến khủng hoảng nhưng chưa đầy đủ, chưa xác định được mức độ khủng hoảng, chưa đủ bình tĩnh đối diện... khả năng chịu áp lực kém.",
+          2: "<strong>2 điểm (Developing):</strong> Xác định chính xác nguyên nhân dẫn đến khủng hoảng, nhưng chưa xác định được mức độ... có bình tĩnh đối diện... chịu đựng được áp lực... xác định được động lực và biện pháp... nhưng không thường xuyên.", // <-- ĐÃ SỬA LỖI 2S
+          3: "<strong>3 điểm (Proficient):</strong> Xác định chính xác nguyên nhân dẫn đến khủng hoảng, mức độ khủng hoảng, chủ động / bình tĩnh đối diện... xác định được động lực và biện pháp cho bản thân vượt qua khủng hoảng.",
+        },
+        7: {
+          // Giải quyết xung đột (Conflict Resolution)
+          0: "<strong>0 điểm (Normally):</strong> Quan tâm nhưng chưa xác định được chính xác nguyên nhân, không có khả năng chia sẻ ý kiến, không có khả năng phối hợp giải quyết.",
+          1: "<strong>1 điểm (Limited):</strong> Xác định được nguyên nhân nhưng chưa đầy đủ, có khả năng chia sẻ ý kiến nhưng chưa hiệu quả, chưa chủ động phối hợp.",
+          2: "<strong>2 điểm (Developing):</strong> Xác định được chính xác nguyên nhân, chia sẻ quan điểm đúng đắn nhưng chưa thường xuyên, chủ động phối hợp nhưng chưa thường xuyên.",
+          3: "<strong>3 điểm (Proficient):</strong> Thường xuyên xác định chính xác nguyên nhân, mức độ xung đột, chia sẻ quan điểm đúng đắn, chủ động phối hợp hiệu quả.",
+        },
+        8: {
+          // Viết (Writing)
+          0: "<strong>0 điểm (Normally):</strong> Trao đổi (email, chat) kém, gây hiểu lầm.",
+          1: "<strong>1 điểm (Limited):</strong> Trao đổi tương đối, đôi khi còn tối nghĩa, cần chỉnh sửa.",
+          2: "<strong>2 điểm (Developing):</strong> Văn bản rõ ràng, email/chat dễ hiểu.",
+          3: "<strong>3 điểm (Proficient):</strong> Văn bản chuyên nghiệp, thuyết phục, súc tích.",
+        },
+        9: {
+          // Lắng nghe (Listening)
+          0: "<strong>0 điểm (Normally):</strong> Không biết lắng nghe.",
+          1: "<strong>1 điểm (Limited):</strong> Biết lắng nghe nhưng không biết cách trình bày, thiếu chủ động/tích cực, thiếu phản hồi.",
+          2: "<strong>2 điểm (Developing):</strong> Biết lắng nghe thấu hiểu và chủ động, biết trình bày, biết dùng ngôn ngữ cơ thể, biết đặt câu hỏi... nhưng không thường xuyên.",
+          3: "<strong>3 điểm (Proficient):</strong> Biết lắng nghe thấu hiểu và chủ động, biết trình bày, sử dụng ngôn ngữ cơ thể, đặt câu hỏi gợi mở, chủ động tóm lược/tổng hợp nội dung.",
+        },
+        10: {
+          // Tự học (Learning)
+          0: "<strong>0 điểm (Normally):</strong> Không có khả năng tự học.",
+          1: "<strong>1 điểm (Limited):</strong> Có khả năng tự học với sự giúp đỡ (Mentor, Assistant), nhưng chưa chủ động, chưa biết xây dựng kế hoạch.",
+          2: "<strong>2 điểm (Developing):</strong> Có khả năng tự học chủ động, biết xây dựng kế hoạch, biết sử dụng phương pháp tự học... nhưng chưa hiệu quả.",
+          3: "<strong>3 điểm (Proficient):</strong> Chủ động xây dựng kế hoạch (mục tiêu, kế hoạch, thực hiện), sử dụng thành thạo phương pháp tự học, chủ động giải quyết vấn đề, biết tự kiểm tra và đánh giá kết quả.",
+        },
+        11: {
+          // Thuyết trình (Presentation)
+          0: "<strong>0 điểm:</strong> Trình bày không rõ ràng, không logic, không thu hút.",
+          1: "<strong>1 điểm:</strong> Trình bày ở mức cơ bản, có nội dung nhưng chưa logic, chưa tốt về hình thức.",
+          2: "<strong>2 điểm:</strong> Trình bày rõ ràng, logic, hình thức ổn.",
+          3: "<strong>3 điểm:</strong> Sử dụng sáng tạo các công cụ thuyết trình, thiết kế sáng tạo hình thức & nội dung trình bày.",
+        },
+        12: {
+          // Tương tác nhóm Online (Group Online)
+          0: "<strong>0 điểm (Normally):</strong> Không tham gia thảo luận trên Group Online.",
+          1: "<strong>1 điểm (Limited):</strong> Có tham gia Group Online từ 1-2 lần/tuần, có tham gia, không hoặc ít đóng góp ý kiến, ít comment.",
+          2: "<strong>2 điểm (Developing):</strong> Có tham gia Group Online trên 2 lần/tuần. Tham gia thường xuyên, còn thụ động trong việc đề xuất ý kiến.",
+          3: "<strong>3 điểm (Proficient):</strong> Có tham gia Group Online trên 2 lần/tuần. Tham gia thường xuyên, chủ động đề xuất đóng góp nhiều ý kiến cho group.",
+        },
+        13: {
+          // Chuyên cần (Attendance)
+          0: "<strong>0 điểm:</strong> Thường xuyên vắng, trễ không lý do.",
+          1: "<strong>1 điểm:</strong> Có vắng/trễ nhưng có báo trước, đôi khi ảnh hưởng chung.",
+          2: "<strong>2 điểm:</strong> Luôn tham gia đầy đủ, đúng giờ.",
+          3: "<strong>3 điểm:</strong> Luôn tham gia đầy đủ, đúng giờ, chuẩn bị kỹ nội dung cho các buổi họp.",
+        },
+        14: {
+          // Lãnh đạo (Leadership)
+          0: "<strong>0 điểm (Normally):</strong> Hoàn thành công việc của một member. Không làm tốt vai trò của leader.",
+          1: "<strong>1 điểm (Limited):</strong> Mô tả được tương đối các mục tiêu và định hướng, thiết lập tương đối kế hoạch, truyền đạt được cơ bản nội dung.",
+          2: "<strong>2 điểm (Developing):</strong> Mô tả được chính xác mục tiêu và định hướng, thiết lập tương đối kế hoạch, truyền đạt cơ bản, gắn kết được đội ngũ, giám sát và thúc đẩy, có hỗ trợ.",
+          3: "<strong>3 điểm (Proficient):</strong> Mô tả chính xác, đầy đủ mục tiêu và định hướng, thiết lập kế hoạch mạch lạc, biết ưu tiên các nhiệm vụ, gắn kết tốt đội ngũ, giám sát - kiểm tra - thúc đẩy liên tục, dự báo được vấn đề.",
+        },
+      };
+
+      // --- Theme Changing (MỚI) ---
+      const colorThemes = {
+        1: "theme-1",
+        2: "theme-2",
+        3: "theme-3",
+        4: "theme-4",
+        5: "theme-5",
+      };
+
+      document
+        .getElementById("member-select")
+        .addEventListener("change", function () {
+          const selectedTheme = colorThemes[this.value] || "theme-1";
+          document.body.className = ""; // Xóa hết theme cũ
+          document.body.classList.add(selectedTheme);
+
+          // Cập nhật màu sắc cho PDF content (để đồng bộ)
+          const pdfContent = document.getElementById("report-content");
+          const style = getComputedStyle(document.body);
+          pdfContent.style.setProperty(
+            "--color-primary",
+            style.getPropertyValue("--color-primary")
+          );
+          pdfContent.style.setProperty(
+            "--color-primary-hover",
+            style.getPropertyValue("--color-primary-hover")
+          );
+          pdfContent.style.setProperty(
+            "--color-accent",
+            style.getPropertyValue("--color-accent")
+          );
+          pdfContent.style.setProperty(
+            "--color-bg-light",
+            style.getPropertyValue("--color-bg-light")
+          );
+          pdfContent.style.setProperty(
+            "--color-bg-dark",
+            style.getPropertyValue("--color-bg-dark")
+          );
+        });
+
+      // --- Modal Functions ---
+      function showModal(skillId, skillTitle) {
+        const criteria = rubricCriteria[skillId];
+        document.getElementById("modal-title").innerText = skillTitle;
+        const listElement = document.getElementById("modal-list");
+        listElement.innerHTML = "";
+        if (criteria) {
+          // Sửa lỗi gõ sai trong dữ liệu (ví dụ: '3G điểm' -> '3 điểm')
+          for (const key in criteria) {
+            const li = document.createElement("li");
+            li.innerHTML = criteria[key].replace(/(\d+)[A-Z](\s*điểm)/, "$1$2"); // Xóa chữ cái lạ
+            listElement.appendChild(li);
+          }
+        } else {
+          listElement.innerHTML =
+            "<li>Chưa có mô tả chi tiết cho kỹ năng này.</li>";
+        }
+        document.getElementById("rubricModal").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("rubricModal").style.display = "none";
+      }
+
+      // SỬA LỖI 3: Logic ẩn/hiện trang mới
+
+      // --- (NEW) Page Navigation ---
+      function showPage(pageId) {
+        // Ẩn tất cả các trang chính
+        infoSection.style.display = "none";
+        wizardContainer.style.display = "none";
+        resultsSection.style.display = "none";
+
+        // Ẩn thanh tiến trình mặc định
+        progressBarContainer.style.display = "none";
+
+        if (pageId === "info") {
+          infoSection.style.display = "block";
+        } else if (pageId === "wizard") {
+          wizardContainer.style.display = "block";
+          progressBarContainer.style.display = "block"; // Chỉ hiện thanh tiến trình ở wizard
+        } else if (pageId === "results") {
+          resultsSection.style.display = "block";
+        }
+      }
+
+      // --- Wizard Navigation (Đã cập nhật) ---
+      function showStep(stepIndex) {
+        wizardSteps.forEach((step, index) => {
+          // step.dataset.step lấy giá trị từ data-step="X"
+          if (parseInt(step.dataset.step) === stepIndex) {
+            step.classList.add("active");
+          } else {
+            step.classList.remove("active");
+          }
+        });
+        // Cập nhật progress bar
+        if (stepIndex > 0) {
+          let progress = (stepIndex / totalSteps) * 100;
+          progressBar.style.width = progress + "%";
+          progressBar.innerText = `Hoàn thành ${Math.round(progress)}%`;
+        }
+      }
+
+      function nextStep(stepIndex) {
+        if (validateStep(stepIndex)) {
+          currentStep++;
+          if (currentStep === 1) {
+            // Bắt đầu từ bước 1
+            showPage("wizard"); // Logic mới: Hiển thị trang wizard
+          }
+          showStep(currentStep);
+        }
+      }
+
+      function prevStep() {
+        currentStep--;
+        if (currentStep === 0) {
+          // Quay về bước thông tin
+          showPage("info"); // Logic mới: Hiển thị trang info
+        }
+        showStep(currentStep);
+      }
+
+      // --- (HÀM ĐÃ CẬP NHẬT) ---
+      function finishForm() {
+        if (validateStep(15)) {
+          // Validate bước cuối (tổng quan)
+          showPage("results"); // Logic mới: Hiển thị trang kết quả
+
+          // 1. Tạo biểu đồ
+          generateChart();
+
+          // 2. Điền thông tin báo cáo
+          const groupName = document.getElementById("groupName").value;
+          const memberName =
+            document.getElementById("member-select").options[
+              document.getElementById("member-select").selectedIndex
+            ].text;
+          const weekStart = document.getElementById("week-start").value;
+          const weekEnd = document.getElementById("week-end").value;
+          const generalComment = document.getElementById("comment").value;
+
+          document.getElementById("report-groupName").innerText = groupName;
+          document.getElementById("report-name").innerText = memberName;
+          document.getElementById(
+            "report-week"
+          ).innerText = `${weekStart} đến ${weekEnd}`;
+          document.getElementById("report-comment-text").innerText =
+            generalComment;
+
+          // 3. Điền bảng điểm
+          populateReportTable();
+        }
+      }
+
+      // --- (HÀM MỚI ĐỂ ĐIỀN BẢNG) ---
+      function populateReportTable() {
+        const tbody = document.getElementById("report-table-body");
+        tbody.innerHTML = ""; // Xóa dữ liệu cũ
+
+        for (let i = 1; i <= 14; i++) {
+          const skill = skillLabels[i - 1];
+          const score = document.getElementById(`s${i}`).value;
+          const comment = document.getElementById(`c${i}`).value;
+
+          const row = `<tr>
+                <td>${i}. ${skill}</td>
+                <td>${score}</td>
+                <td>${comment}</td>
+            </tr>`;
+          tbody.innerHTML += row;
+        }
+      }
+
+      function startOver() {
+        currentStep = 0;
+        showPage("info"); // Logic mới: Hiển thị trang info
+        showStep(0); // Kích hoạt lại bước 0
+        if (chart) chart.destroy();
+        // Không reset form, để người dùng có thể sửa
+      }
+
+      // --- Validation Functions (ĐÃ SỬA) ---
+      function validateScore(input) {
+        const value = parseFloat(input.value);
+        // Sửa: Chỉ cho phép SỐ NGUYÊN từ 0-3
+        if (
+          input.value === "" ||
+          value < 0 ||
+          value > 3 ||
+          !Number.isInteger(value)
+        ) {
+          input.classList.add("invalid");
+          return false;
+        } else {
+          input.classList.remove("invalid");
+          return true;
+        }
+      }
+
+      function validateStep(stepIndex) {
+        const stepElement = document.querySelector(
+          `.wizard-step[data-step="${stepIndex}"]`
+        );
+        if (!stepElement) return true; // Step không tồn tại
+
+        const inputs = stepElement.querySelectorAll(
+          "input[required], textarea[required], select[required]"
+        );
+        const errorMsg = document.getElementById(
+          `error-message-step${stepIndex}`
+        );
+        let isValid = true;
+
+        for (const input of inputs) {
+          if (!input.value.trim()) {
+            isValid = false;
+          }
+          if (input.type === "number") {
+            if (!validateScore(input)) {
+              // Dùng lại hàm validateScore đã sửa
+              isValid = false;
+            }
+          }
+        }
+
+        if (errorMsg) {
+          errorMsg.style.display = isValid ? "none" : "block";
+        }
+
+        return isValid;
+      }
+
+      // --- Chart Function (Theme-aware) ---
+      function generateChart() {
+        // Lấy màu từ CSS variables
+        const style = getComputedStyle(document.body);
+        const chartBorderColor =
+          style.getPropertyValue("--color-secondary").trim() || "#0ea5e9";
+        const chartBgColor =
+          style.getPropertyValue("--color-accent-light").trim() ||
+          "rgba(14, 165, 233, 0.3)";
+        const pointLabelColor =
+          style.getPropertyValue("--color-accent").trim() || "#0c4a6e";
+
+        const labelsWithNumbers = skillLabels.map(
+          (label, index) => `${index + 1}. ${label}`
+        );
+        const data = [];
+        for (let i = 1; i <= 14; i++) {
+          data.push(document.getElementById(`s${i}`).value);
+        }
+
+        let memberName =
+          document.getElementById("member-select").options[
+            document.getElementById("member-select").selectedIndex
+          ].text;
+
+        if (chart) chart.destroy();
+        const ctx = document.getElementById("radarChart").getContext("2d");
+        chart = new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: labelsWithNumbers,
+            datasets: [
+              {
+                label: `Điểm tự đánh giá - ${memberName}`,
+                data: data.map(Number),
+                backgroundColor: chartBgColor,
+                borderColor: chartBorderColor,
+                borderWidth: 2,
+                pointBackgroundColor: chartBorderColor,
+                pointRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            // TẮT ANIMATION ĐỂ PDF HOẠT ĐỘNG
+            animation: {
+              duration: 0,
+            },
+            scales: {
+              r: {
+                min: 0,
+                max: 3,
+                ticks: {
+                  stepSize: 1,
+                  backdropColor: "rgba(255, 255, 255, 0.75)",
+                  color: "#444",
+                  font: { weight: "bold" },
+                },
+                pointLabels: {
+                  font: { size: 9, weight: "600" },
+                  color: pointLabelColor,
+                },
+                grid: { color: "rgba(0, 0, 0, 0.1)" },
+                angleLines: { color: "rgba(0, 0, 0, 0.1)" },
+              },
+            },
+            plugins: {
+              legend: { labels: { font: { size: 11, weight: "600" } } },
+            },
+          },
+        });
+      }
+
+      // --- PDF Download Function (ĐÃ CẬP NHẬT ĐỂ SỬA LỖI TRANG TRẮNG) ---
+      async function downloadPDF() {
+        const reportElement = document.getElementById("report-content"); // (MỚI)
+        const buttons = document.querySelector(
+          "#results-section .nav-btn-group"
+        );
+        const canvas = document.getElementById("radarChart");
+        const chartImageElement = document.getElementById("pdf-chart-image");
+
+        try {
+          if (!chart) {
+            console.error("Chart chưa được khởi tạo.");
+            return;
+          }
+
+          // Lấy thông tin member trước
+          const memberName =
+            document.getElementById("member-select").options[
+              document.getElementById("member-select").selectedIndex
+            ].text;
+          const weekStart = document.getElementById("week-start").value;
+
+          // 1. Lấy ảnh Base64 từ chart với độ phân giải cao
+          // Tạo canvas ẩn với độ phân giải cao để render chart
+          const scaleFactor = 3;
+          const tempCanvas = document.createElement('canvas');
+          const tempCtx = tempCanvas.getContext('2d');
+          
+          // Tính kích thước canvas với độ phân giải cao
+          const rect = canvas.getBoundingClientRect();
+          tempCanvas.width = rect.width * scaleFactor;
+          tempCanvas.height = rect.height * scaleFactor;
+          
+          // Tạo chart tạm với độ phân giải cao
+          const style = getComputedStyle(document.body);
+          const chartBorderColor = style.getPropertyValue("--color-secondary").trim() || "#0ea5e9";
+          const chartBgColor = style.getPropertyValue("--color-accent-light").trim() || "rgba(14, 165, 233, 0.3)";
+          const pointLabelColor = style.getPropertyValue("--color-accent").trim() || "#0c4a6e";
+          
+          const labelsWithNumbers = skillLabels.map((label, index) => `${index + 1}. ${label}`);
+          const data = [];
+          for (let i = 1; i <= 14; i++) {
+            data.push(document.getElementById(`s${i}`).value);
+          }
+          
+          const tempChart = new Chart(tempCtx, {
+            type: "radar",
+            data: {
+              labels: labelsWithNumbers,
+              datasets: [{
+                label: `Điểm tự đánh giá - ${memberName}`,
+                data: data.map(Number),
+                backgroundColor: chartBgColor,
+                borderColor: chartBorderColor,
+                borderWidth: 2 * scaleFactor,
+                pointBackgroundColor: chartBorderColor,
+                pointRadius: 4 * scaleFactor,
+              }],
+            },
+            options: {
+              responsive: false,
+              maintainAspectRatio: false,
+              animation: { duration: 0 },
+              scales: {
+                r: {
+                  min: 0,
+                  max: 3,
+                  ticks: {
+                    stepSize: 1,
+                    backdropColor: "rgba(255, 255, 255, 0.75)",
+                    color: "#444",
+                    font: { weight: "bold", size: 10 * scaleFactor },
+                  },
+                  pointLabels: {
+                    font: { size: 9 * scaleFactor, weight: "600" },
+                    color: pointLabelColor,
+                  },
+                  grid: { color: "rgba(0, 0, 0, 0.1)" },
+                  angleLines: { color: "rgba(0, 0, 0, 0.1)" },
+                },
+              },
+              plugins: {
+                legend: { labels: { font: { size: 11 * scaleFactor, weight: "600" } } },
+              },
+            },
+          });
+          
+          // Chờ chart render xong
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          
+          // Lấy ảnh với độ phân giải cao từ chart tạm
+          const chartImage = tempChart.toBase64Image('image/png', 1.0);
+          
+          // Hủy chart tạm
+          tempChart.destroy();
+
+          // 2. Gán ảnh vào thẻ <img> tạm
+          chartImageElement.src = chartImage;
+          chartImageElement.style.display = "block";
+
+          // 3. Ẩn canvas gốc
+          canvas.style.display = "none";
+
+          // 4. (ĐÃ XÓA) Gỡ bỏ logic class helper
+          // document.body.classList.add('pdf-generating');
+
+          // Lấy element là nội dung báo cáo
+          const element = document.getElementById("report-content");
+
+          const opt = {
+            margin: [0.4, 0.4, 0.4, 0.4], // Lề trên, phải, dưới, trái (inch) - giảm để vừa A4
+            filename: `BaoCao_Rubric_${
+              memberName.split(" ")[0]
+            }_${weekStart}.pdf`,
+            image: { type: "png", quality: 1.0 }, // Dùng PNG với quality tối đa
+            html2canvas: { 
+              scale: 3, // Tăng scale lên 3 để có độ phân giải cao
+              useCORS: true, 
+              logging: false,
+              letterRendering: true, // Tối ưu render chữ
+              allowTaint: false,
+              backgroundColor: '#ffffff'
+            },
+            jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+          };
+
+          // Chờ một chút để DOM cập nhật ảnh và CSS
+          await new Promise((resolve) => setTimeout(resolve, 200));
+
+          // 5. Chụp PDF với ảnh tĩnh và CSS đã tối ưu
+          html2pdf()
+            .set(opt)
+            .from(element)
+            .save()
+            .then(() => {
+              // 6. Khôi phục lại trạng thái ban đầu
+              // (ĐÃ XÓA) Gỡ bỏ logic class helper
+              // document.body.classList.remove('pdf-generating');
+              chartImageElement.style.display = "none";
+              chartImageElement.src = "";
+              canvas.style.display = "block";
+            });
+        } catch (e) {
+          console.error("Lỗi khi tạo PDF:", e);
+          // Khôi phục lại trạng thái nếu có lỗi
+          // (ĐÃ XÓA) Gỡ bỏ logic class helper
+          // document.body.classList.remove('pdf-generating');
+          chartImageElement.style.display = "none";
+          chartImageElement.src = "";
+          canvas.style.display = "block";
+        }
+      }
+
+      // --- Download Excel Function (MỚI) ---
+      function downloadExcel() {
+        const data = [
+          ["Kỹ năng", "Điểm", "Nhận xét"], // Header
+        ];
+
+        // Lấy dữ liệu
+        for (let i = 1; i <= 14; i++) {
+          const skillName = skillLabels[i - 1];
+          const score = document.getElementById(`s${i}`).value;
+          const comment = document.getElementById(`c${i}`).value;
+          data.push([`${i}. ${skillName}`, Number(score), comment]);
+        }
+
+        // Thêm nhận xét tổng quan
+        data.push([
+          "Nhận xét tổng quan",
+          "",
+          document.getElementById("comment").value,
+        ]);
+
+        // Tạo workbook và worksheet
+        const ws = XLSX.utils.aoa_to_sheet(data);
+
+        // Định dạng cột (ví dụ: độ rộng)
+        ws["!cols"] = [
+          { wch: 30 }, // Cột Kỹ năng
+          { wch: 10 }, // Cột Điểm
+          { wch: 80 }, // Cột Nhận xét
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Tự đánh giá Rubric");
+
+        // Lấy thông tin tên file
+        const memberName = document
+          .getElementById("member-select")
+          .options[
+            document.getElementById("member-select").selectedIndex
+          ].text.split(" ")[0];
+        const weekStart = document.getElementById("week-start").value;
+
+        // Xuất file
+        XLSX.writeFile(wb, `Rubric_${memberName}_${weekStart}.xlsx`);
+      }
+
+      // Khởi tạo wizard ở bước 0 (ĐÃ CẬP NHẬT)
+      document.addEventListener("DOMContentLoaded", () => {
+        showPage("info"); // Logic mới: Luôn bắt đầu ở trang info
+        showStep(0); // Kích hoạt bước 0 (info-section)
+
+        // Đồng bộ theme cho report-content ngay từ đầu
+        const pdfContent = document.getElementById("report-content");
+        const style = getComputedStyle(document.body);
+        pdfContent.style.setProperty(
+          "--color-primary",
+          style.getPropertyValue("--color-primary")
+        );
+        pdfContent.style.setProperty(
+          "--color-primary-hover",
+          style.getPropertyValue("--color-primary-hover")
+        );
+        pdfContent.style.setProperty(
+          "--color-accent",
+          style.getPropertyValue("--color-accent")
+        );
+        pdfContent.style.setProperty(
+          "--color-bg-light",
+          style.getPropertyValue("--color-bg-light")
+        );
+        pdfContent.style.setProperty(
+          "--color-bg-dark",
+          style.getPropertyValue("--color-bg-dark")
+        );
+      });
+    </script>
+  </body>
+</html>
